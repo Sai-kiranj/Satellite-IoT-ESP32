@@ -1,120 +1,136 @@
-# Adaptive Communication Framework for Small Satellites with Secure Cloud Integration
- A MicroPython-based IoT project using ESP32, DHT11, and MQ135 to monitor temperature, humidity, and air quality with real-time Telegram alerts.
+# ESP32 IoT Environment Monitor
 
-🌍 ESP32 Environmental Monitoring System with Telegram Alerts
-
-This project uses an ESP32, DHT11 temperature & humidity sensor, and MQ135 gas sensor to continuously monitor environmental conditions and send **real-time alerts to Telegram** when threshold values are exceeded.
-
-It is ideal for:
-
-* Smart home monitoring
-* Indoor air quality monitoring
-* Labs & server rooms
-* IoT learning projects
-
-🔧 Hardware Components
-
-* ESP32 Development Board
-* DHT11 Temperature & Humidity Sensor
-* MQ135 Gas Sensor
-* Breadboard & Jumper Wires
-* WiFi connection
-
-🔌 Pin Connections
-
-| Component        | ESP32 Pin                 |
-| ---------------- | ------------------------- |
-| DHT11 Data       | GPIO14                    |
-| MQ135 Analog Out | GPIO34                    |
-| VCC              | 3.3V / 5V (as per sensor) |
-| GND              | GND                       |
-
-> ⚠ Ensure MQ135 analog output does **not exceed 3.3V** for ESP32 ADC safety.
-
-📲 Features
-
-* 📡 WiFi connectivity
-* 🌡 Temperature monitoring
-* 💧 Humidity monitoring
-* ⚠ Gas / air quality detection
-* 📩 Telegram alert notifications
-* 🔁 Auto-reset alerts when values return to normal
-
-⚙️ Threshold Values (Customizable)
-
-```python
-TEMP_THRESHOLD = 35     # Celsius
-HUM_THRESHOLD = 70      # Percentage
-MQ135_THRESHOLD = 1200  # ADC value (0–4095)
-```
-
-🤖 Telegram Bot Setup
-
-1. Open Telegram and search for **@BotFather**
-2. Create a new bot using `/newbot`
-3. Copy the **Bot Token**
-4. Get your **Chat ID** using @userinfobot or similar bots
-5. Update these values in the code:
-
-```python
-BOT_TOKEN = "YOUR_BOT_TOKEN"
-CHAT_ID = YOUR_CHAT_ID
-```
-
-🌐 WiFi Configuration
-
-Update your WiFi credentials in the code:
-
-```python
-SSID = "YOUR_WIFI_NAME"
-PASSWORD = "YOUR_WIFI_PASSWORD"
-```
-
-🧠 Working Principle
-
-1. ESP32 connects to WiFi
-2. Reads temperature & humidity from DHT11
-3. Reads gas level from MQ135
-4. Compares readings with predefined thresholds
-5. Sends Telegram alerts when limits are crossed
-6. Sends a "back to normal" message once values stabilize
-
-🛠 Software Requirements
-
-* MicroPython firmware for ESP32
-* Thonny / uPyCraft / VS Code (with MicroPython extension)
-* Required libraries:
-
-  * `network`
-  * `urequests`
-  * `dht`
-  * `machine`
-
-🚀 How to Run
-
-1. Flash MicroPython on ESP32
-2. Upload the Python script
-3. Update WiFi & Telegram credentials
-4. Open Serial Monitor
-5. Power the ESP32
-6. Receive alerts on Telegram 
-
-📌 Notes
-
-* MQ135 readings vary with environment – calibration recommended
-* DHT11 has slower response; wait ~2 seconds between reads
-* Internet connection required for Telegram alerts
-
-📜 License
-
-This project is open-source and free to use for **learning and academic purposes**.
-
-👨‍💻 Author
-
-Sai Kiran J | Vishwas V | Vaishanavi V
-Electronics & Communication Engineering
-ESP32 | IoT | Embedded Systems
+> MicroPython-based environmental monitoring system using ESP32, DHT11, and MQ135  
+> with real-time Telegram alerts via WiFi.
 
 ---
 
-⭐ If you find this project helpful, don’t forget to star the repository!
+## Overview
+
+This project continuously monitors temperature, humidity, and air quality using
+an ESP32 microcontroller. When sensor readings exceed defined thresholds, instant
+alerts are pushed to a Telegram bot. Values returning to normal also trigger a
+recovery notification.
+
+Ideal for smart home monitoring, lab environments, server rooms, and IoT learning.
+
+---
+
+## Hardware
+
+| Component | Purpose |
+|-----------|---------|
+| ESP32 Dev Board | Main microcontroller + WiFi |
+| DHT11 Sensor | Temperature & humidity |
+| MQ135 Gas Sensor | Air quality / gas detection |
+| Breadboard + Jumper Wires | Connections |
+
+### Pin Connections
+
+| Component | ESP32 Pin |
+|-----------|-----------|
+| DHT11 Data | GPIO 14 |
+| MQ135 Analog Out | GPIO 34 |
+| VCC | 3.3V / 5V |
+| GND | GND |
+
+> Note: Ensure MQ135 analog output does not exceed 3.3V for ESP32 ADC safety.
+
+---
+
+## Features
+
+- WiFi connectivity via MicroPython `network` library
+- Real-time temperature and humidity monitoring (DHT11)
+- Gas / air quality detection (MQ135)
+- Telegram bot alerts when thresholds are exceeded
+- Auto-recovery notification when values normalize
+
+---
+
+## Threshold Configuration
+```python
+TEMP_THRESHOLD   = 35     # Celsius
+HUM_THRESHOLD    = 70     # Percentage
+MQ135_THRESHOLD  = 1200   # ADC value (0–4095)
+```
+
+---
+
+## Setup
+
+### 1. Telegram Bot
+
+1. Open Telegram → search **@BotFather** → create a new bot with `/newbot`
+2. Copy the **Bot Token**
+3. Get your **Chat ID** via @userinfobot
+4. Update in `main.py`:
+```python
+BOT_TOKEN = "YOUR_BOT_TOKEN"
+CHAT_ID   = YOUR_CHAT_ID
+```
+
+### 2. WiFi Credentials
+```python
+SSID     = "YOUR_WIFI_NAME"
+PASSWORD = "YOUR_WIFI_PASSWORD"
+```
+
+### 3. Flash & Run
+
+1. Flash MicroPython firmware onto ESP32
+2. Upload `main.py` using Thonny or uPyCraft
+3. Power the ESP32 — alerts will appear on Telegram
+
+---
+
+## How It Works
+```
+ESP32 boots
+    │
+    ├── Connects to WiFi
+    │
+    ├── Reads DHT11 → Temperature + Humidity
+    ├── Reads MQ135 → Air Quality (ADC)
+    │
+    ├── Exceeds threshold? ──Yes──▶ Send Telegram alert
+    │                        │
+    │                       No
+    │                        │
+    └── Values normal again?──▶ Send recovery message
+```
+
+---
+
+## Software Requirements
+
+- MicroPython firmware for ESP32
+- Thonny IDE / uPyCraft / VS Code with MicroPython extension
+- Libraries: `network`, `urequests`, `dht`, `machine`
+
+---
+
+## Files
+
+| File | Description |
+|------|-------------|
+| `main.py` | Main application code |
+| `README.md` | Project documentation |
+
+---
+
+## Authors
+
+| Name | Role |
+|------|------|
+| Sai Kiran J | ESP32 firmware, IoT integration |
+| Vishwas V | Hardware setup, sensor calibration |
+| Vaishanavi V | Cloud integration, Telegram bot |
+
+ECE Department — Cambridge Institute of Technology, Bengaluru
+
+---
+
+## License
+
+Open-source — free to use for academic and learning purposes.
